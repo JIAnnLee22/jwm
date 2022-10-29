@@ -1,40 +1,15 @@
-#include <X11/X.h>
-#include <X11/Xlib.h>
 #include <stdio.h>
-#include <unistd.h>
+#include <string.h>
 
-void window_fullscreem(Window *window){
-}
+#include "jwm.h"
 
-int main(void) {
+void run() {}
+void version() { printf("jwm version is %s\n", VERSION); }
 
-  Display *display;
-  XEvent ev;
+int main(int argc, char *argv[]) {
 
-  if (!(display = XOpenDisplay(0x0)))
-    return 1;
-
-  XGrabKey(display, XKeysymToKeycode(display, XStringToKeysym("I")), Mod1Mask,
-           DefaultRootWindow(display), True, GrabModeAsync, GrabModeAsync);
-
-  XGrabButton(display, 1, Mod1Mask, DefaultRootWindow(display), True,
-              ButtonPressMask | ButtonReleaseMask | PointerMotionMask,
-              GrabModeAsync, GrabModeAsync, None, None);
-
-  for (;;) {
-    XNextEvent(display, &ev);
-    if (ev.type == KeyPress) {
-      if (fork() == 0) {
-        if (display)
-          close(ConnectionNumber(display));
-        setsid();
-        char *roficmd[] = {"rofi", "-show", "drun", NULL};
-        execvp(roficmd[0], roficmd);
-        perror(" failed");
-      }
-    } else if (ev.type == ButtonPress) {
-      break;
-    }
+  if (argc == 2 && !strcmp("-v", argv[1])) {
+    version();
   }
   return 0;
 }
